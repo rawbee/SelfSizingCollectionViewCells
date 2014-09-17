@@ -38,10 +38,25 @@
     return self;
 }
 
+-(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    if( [text isEqualToString:@"\n"] ) {
+        [_textView resignFirstResponder];
+        return NO;
+    }
+    
+    CGSize fitting = [_textView sizeThatFits:CGSizeMake(320, FLT_MAX)];
+    if( fitting.height != _textView.frame.size.height ) {
+        [self updateConstraints];
+        [self.delegate cell:self sizeDidChange:fitting];
+    }
+    return YES;
+}
+
 -(void)updateConstraints {
     NSLog( @"%@::%@", NSStringFromClass([self class]), NSStringFromSelector(_cmd) );
     
     [self.contentView removeConstraints:self.contentView.constraints];
+    [_textView removeConstraints:_textView.constraints];
     
     CGSize fitting = [_textView sizeThatFits:CGSizeMake(self.frame.size.width, FLT_MAX)];
     
@@ -71,6 +86,7 @@
 }
 
 - (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
+    NSLog( @"%@::%@", NSStringFromClass([self class]), NSStringFromSelector(_cmd) );
     
     UICollectionViewLayoutAttributes *attr = [layoutAttributes copy];
     CGSize size = [self.textView sizeThatFits:CGSizeMake(CGRectGetWidth(layoutAttributes.frame),CGFLOAT_MAX)];
@@ -78,6 +94,11 @@
     newFrame.size.height = size.height;
     attr.frame = newFrame;
     return attr;
+}
+
+-(CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize {
+    NSLog( @"%@::%@", NSStringFromClass([self class]), NSStringFromSelector(_cmd) );
+    return [super systemLayoutSizeFittingSize:targetSize];
 }
 
 @end

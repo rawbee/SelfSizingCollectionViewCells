@@ -9,7 +9,7 @@
 #import "CollectionViewController.h"
 #import "CollectionViewCell.h"
 
-@interface CollectionViewController ()
+@interface CollectionViewController () <CollectionViewCellDelegate>
 
 @property (nonatomic, strong) UICollectionViewFlowLayout *layout;
 @property (nonatomic, strong) NSMutableArray *items;
@@ -31,6 +31,10 @@ static NSString * const reuseIdentifier = @"Cell";
     _layout = [[UICollectionViewFlowLayout alloc] init];
     _layout.estimatedItemSize = CGSizeMake(320, 25);
     self.collectionView.collectionViewLayout = _layout;
+    
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [self.layout invalidateLayout];
+//    });
 }
 
 #pragma mark <UICollectionViewDataSource>
@@ -45,11 +49,16 @@ static NSString * const reuseIdentifier = @"Cell";
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
+    CollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
     
     // Configure the cell
-    
+    cell.delegate = self;
     return cell;
+}
+
+-(void)cell:(CollectionViewCell *)cell sizeDidChange:(CGSize)size {
+    NSLog( @"%@::%@", NSStringFromClass([self class]), NSStringFromSelector(_cmd) );
+//    [self.layout invalidateLayout];
 }
 
 #pragma mark <UICollectionViewDelegate>
