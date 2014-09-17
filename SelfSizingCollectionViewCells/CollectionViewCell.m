@@ -70,10 +70,14 @@
     [super updateConstraints];
 }
 
--(UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
-    NSLog( @"%@::%@", NSStringFromClass([self class]), NSStringFromSelector(_cmd) );
+- (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
     
-    return [super preferredLayoutAttributesFittingAttributes:layoutAttributes];
+    UICollectionViewLayoutAttributes *attr = [layoutAttributes copy];
+    CGSize size = [self.textView sizeThatFits:CGSizeMake(CGRectGetWidth(layoutAttributes.frame),CGFLOAT_MAX)];
+    CGRect newFrame = attr.frame;
+    newFrame.size.height = size.height;
+    attr.frame = newFrame;
+    return attr;
 }
 
 @end
