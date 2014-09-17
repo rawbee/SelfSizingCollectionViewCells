@@ -9,7 +9,7 @@
 #import "CollectionViewController.h"
 #import "CollectionViewCell.h"
 
-@interface CollectionViewController ()
+@interface CollectionViewController () <CollectionViewCellDelegate>
 
 @property (nonatomic, strong) UICollectionViewFlowLayout *layout;
 @property (nonatomic, strong) NSMutableArray *items;
@@ -33,6 +33,11 @@ static NSString * const reuseIdentifier = @"Cell";
     self.collectionView.collectionViewLayout = _layout;
 }
 
+-(void)cell:(CollectionViewCell *)cell sizeDidChange:(CGSize)size {
+    NSLog( @"%@::%@", NSStringFromClass([self class]), NSStringFromSelector(_cmd) );
+    [self.layout invalidateLayout];
+}
+
 #pragma mark <UICollectionViewDataSource>
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
@@ -45,9 +50,11 @@ static NSString * const reuseIdentifier = @"Cell";
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
+    CollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
     
     // Configure the cell
+    cell.delegate = self;
+    cell.item = indexPath.item;
     
     return cell;
 }
